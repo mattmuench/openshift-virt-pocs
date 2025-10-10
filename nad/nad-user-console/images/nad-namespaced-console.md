@@ -1,5 +1,7 @@
 # Creating local private networks - namespace specific - using the console
 
+Goal: As an administrator, I want to create private networks within a namespace that VMs can communicate on without the need of an additional network and no external access. I want to use the UI console only.
+
 An overview is available in [Overview to local networks](nad-overview.md).
 
 Namespace specific NADs can be used to provide an isolated local network that is not using the pod subnet. This is useful if an administrator needs to isolate any communication between pods or VMs from any other network and the potential access from unauthorized resources.
@@ -8,14 +10,14 @@ Namespace specific NADs can be used to provide an isolated local network that is
 "Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
 
 **Note:**
-"You must consider the following limitations before implementing a primary UDN:
+"You must consider the following limitations before implementing a primary UDN [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
 
-You cannot use the virtctl ssh command to configure SSH access to a VM.
-You cannot use the oc port-forward command to forward ports to a VM.
-You cannot use headless services to access a VM.
-You cannot define readiness and liveness probes to configure VM health checks." [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn)
+- You cannot use the virtctl ssh command to configure SSH access to a VM.
+- You cannot use the oc port-forward command to forward ports to a VM.
+- You cannot use headless services to access a VM.
+- You cannot define readiness and liveness probes to configure VM health checks."
 
-## 1. Create new namesapces configured for the use with UDNs
+## 1. Create new namespaces configured for the use with UDNs
 
 Using the main menu, create a namespace but directly during creation, specify the label `k8s.ovn.org/primary-user-defined-network`.
 
@@ -25,11 +27,13 @@ Using the main menu, create a namespace but directly during creation, specify th
 
 ![UI: create second namespace with the specific label applied:](images/create-namespace-nad2.png)
 
-## 2. Inform yourself about networks in use with the individual hypervisor cluster
+## 2. Optional: Inform yourself about networks in use with the individual hypervisor cluster
+
+Since the UDN traffic is encapsulated anyways when travelling over the cluster and host network, there shouldn't be any clashes. However, using different CIDRs might ease any troubleshooting when not having overlapping use of CIDRs in different layers of the network.
 
 Prepare for creating a UDN with a specific CIDR. The IP addresses for the VMs in primary UDNs with a layer 2 topology are provided automatically. A VM would need to use DHCP to configure the network interface in order to be able to use the layer 2 network properly. Those assigned IP addresses will be retained automatically to avoid handing out the same IP address to different instance upon reboot or migrating VMs.
 
-In order to avoid clashes with cluster networks in use, one would check the cluster IP address ranges in use before selecting the CIDR to use. One can check it from the console. If one has no access to the cluster config, check with the administrator of the cluster which network settings are safe to be used in UDNs.
+In order to avoid potential clashes with cluster networks in use, one would check the cluster IP address ranges in use before selecting the CIDR to use. One can check it from the console. If one has no access to the cluster config, check with the administrator of the cluster which network settings are safe to be used in UDNs.
 
 Select _Administration_ and _CustomResourceDefinitions_ and then type in the search field _networks.config_ . Only one item is listed marked with _CRD_ named _network_. Then switch the submenu in the window to _Instances_, select the link for the entry _NO_ _cluster_ and then switch the submenu of the newly displayed page to _YAML_ view.\
 ![UI view of OpenShift console to create UDNs](images/udn-user-check-cluster-networks.png)
@@ -79,53 +83,32 @@ Create two VMs using the same namespace but the new local network resource, the 
 
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm2-create.png)\
 
+The VM will be automatically started if not disabled.
+
 Already from the overview of the started VM, the assigned IP address is listed.\
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm2-running-network-address.png)\
 
-## Then start the VM, login to the console, and check the network address assigned to the VM network.
+Create another VM inside the same namespace like the one before.
 
-The peer VM inside the same namespace should be able to ping the peer VM:\
+## Check communication
+
+Record the network address assigned to the VM on the default network on the VM overview.
+
+Login to the console of one of the newly created VMs and check check with ping the network connection is working.
+
+The peer VM inside the same namespace should be responding to the ping:\
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-to-vm2-ping.png)\
 
-# NO - PARKING LOT for other use case:
+## Check IP addresses and communication one of the VMs is live migrated to another node
 
-In the VM specification, select _Customize_ and then activate the _Network interfaces_ submenu. A default network interface is available. If full isolation is to be achieved and no transparent network access to extern is allowed, one can switch it off or deleet it fully from the config menu.\
+Check the actual nodes the VMs are running on:
+![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-pre.png)\
 
-![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-create-custom-network.png)\
+Start the live migration (Migration => Compute) of one of the VMs:
+![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-start.png)\
 
-In order to use the new interface, however, through _Add network interface_ one may create an additional network interface.
+Wait for the VM to complete migration and verify new node:
+![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-post-done.png)\
 
-The VM should come up and the network interface should list a valid IP address for the configured UDN range.
-
-====== wrong
-This is a doc bug:\
-![UI view of OpenShift console to create UDNs](images/BUG-primary-udn-config-of-a-vm.png)\
-==> It's just wrong to change the name in 4.19.
-
-My text:
-
-Since one cannot create a VM using the primary UDN as the network interface fully through the UI, an initial base version of the - although beside networking - fully configured VM must be created without starting it. This is by deselecting the _Start this VirtualMachine after creation (Always)_ which will turn then into _Start this VirtualMachine after creation (Halted)_. The finish creation of the VM and wait for the VM being provisioned and stopped.\
-
-![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-prepare-vm-base.png)\
-
-After the VM is created but stopped, switch from the _Overview_ submenu to the _YAML_ submenu and scroll down until the `devices:` section in the `spec.template.spec.domain` defintions:\
-![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-change-vm-base-to-udn-yaml.png)\
-
-There, change in the section of `interfaces:` the name of the binding to `primary-udn` and in the section of `networks:` the name to `primary-udn` too.
-
-```
-interfaces:
-  - binding:
-      name: l2bridge
-    model: virtio
-    name: primary-udn
-    ...
-networks:
-  - name: primary-udn
-    pod: {}
-```
-
-to end up with this section as shown below:\
-![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-change-vm-base-to-udn-changed-yaml.png)\
-
-Repeat the same steps to create a second VM inside the same namespace.
+Check connectivity after live migration - ping peer VM and verify connection:
+![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-post-ping.png)\
