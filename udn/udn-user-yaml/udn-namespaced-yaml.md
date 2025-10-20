@@ -2,7 +2,7 @@
 
 Goal: As an administrator, I want to create private networks within a namespace that VMs can communicate on without the need of an additional network and no external access. I want to use the CLI only.
 
-An overview is available in [Overview to local networks](nad-overview.md).
+An overview is available in [Overview to local networks](udn-overview.md).
 
 Namespace specific NADs can be used to provide an isolated local network that is not using the pod subnet. This is useful if an administrator needs to isolate any communication between pods or VMs from any other network and the potential access from unauthorized resources.
 
@@ -22,21 +22,29 @@ The station of choice running the CLI should have been installed the virtctl CLI
 
 ## 1. Create new namespaces configured for the use with UDNs
 
-Example namespace defintion is created here in the file `nad-namespace-namespace-with-nad.yaml`
+Example namespace defintion is created here in the file `udn-namespace-namespace-with-udn.yaml`
 
 ```
-!!!include(nad-namespace-namespace-with-nad.yaml)!!!
+!!!include(udn-namespace-namespace-with-udn.yaml)!!!
 ```
 
 Create the new namespace.
 
 ```
-oc create -f nad-namespace-namespace-with-nad.yaml
+oc create -f udn-namespace-namespace-with-udn.yaml
 ```
 
 ## 2. Optional: Inform yourself about networks in use with the individual hypervisor cluster
 
-Since the UDN traffic is encapsulated anyways when travelling over the cluster and host network, there shouldn't be any clashes. However, using different CIDRs might ease any troubleshooting when not having overlapping use of CIDRs in different layers of the network.
+Since the UDN traffic is encapsulated anyways when travelling over the cluster and host network, there shouldn't be any clashes.
+
+However, regarding the cluster network, there should be no overlapping of the ranges with the UDN. The default network will still be connected to the pod for metrics purposes, at least, and an overlapping might produce unpredictable routing for the VM traffic.
+
+With regards to other UDNs configured, there should be - naturally - no overlapping at all within the same VM. UDNs configured for other namespaces might use the same chosen CIDR without any issues.
+
+With regards to perhaps cluster UDNs, overlapping of CIDRs must be avoided too. If an admin is allowed to create namespaced UDNs, one should check for possible cluster UDNs configured for the affected namespaces.
+
+With regards to the host network, using different CIDRs might ease any troubleshooting when not having overlapping use of CIDRs in different layers of the network.
 
 Prepare for creating a UDN with a specific CIDR. The IP addresses for the VMs in primary UDNs with a layer 2 topology are provided automatically. A VM would need to use DHCP to configure the network interface in order to be able to use the layer 2 network properly. Those assigned IP addresses will be retained automatically to avoid handing out the same IP address to different instance upon reboot or migrating VMs.
 
@@ -70,22 +78,22 @@ In the above example, the used networks are the one for _clusterNetwork_ being `
 
 ## 3. Create the UDN
 
-One must create a network resource to consume it with VMs (and pods). Layer 2 UDNs assign an IP address from a range specified automatically for the VMs. TO retain the IP address of the VM throughout the lifecycle pf the VM, the `ipam.lifecycle` setting should be set to `persistent`. Without this setting, the IP address could be reassigned to any other pod or VM upon restart or during live migration to another node.
+One must create a network resource to consume it with VMs (and pods). Layer 2 UDNs assign an IP address from a range specified automatically for the VMs. To retain the IP address of the VM throughout the lifecycle pf the VM, the `ipam.lifecycle` setting should be set to `persistent`. Without this setting, the IP address could be reassigned to any other pod or VM upon restart or during live migration to another node.
 
 **Note:** Up to OpenShift version 4.19, the local network resource must be created upfront. Later versions of OpenShift might allow an on-the-fly creation of the network resource at the time of a VM creation.
 
 A VM would need to use DHCP to configure the network interface in order to be able to use the layer 2 network properly. Those assigned IP addresses will be retained automatically when configured.
 
-Create a file for the UDN configuration, like here in the file `nad-namespaced-udn.yaml`:
+Create a file for the UDN configuration, like here in the file `udn-namespaced-udn.yaml`:
 
 ```
-!!!include(nad-namespaced-udn.yaml)!!!
+!!!include(udn-namespaced-udn.yaml)!!!
 ```
 
 Create the new udn resource.
 
 ```
-oc create -f nad-namespaced-udn.yaml
+oc create -f udn-namespaced-udn.yaml
 ```
 
 Check the resource is being created.
@@ -97,7 +105,7 @@ udn-primary-l2   35s
 [root@acm41-jump ns-4]#
 ```
 
-Once a namespace scoped UDN is configured, automatically it's provided to the namespace through a Network Attachment Definiiton (NAD) using the same name as the UDN.
+Once a namespace scoped UDN is configured, automatically it's provided to the namespace through a Network Attachment Definiton (NAD) using the same name as the UDN.
 
 ```
 [root@acm41-jump ~]# oc get -n namespace-4 network-attachment-definitions
@@ -114,20 +122,20 @@ The automatically applied NAD to the namespace configured implies that the defau
 
 Create two VMs using the same namespace but the new local network resource, the UDN, for communication. This is done automatically for the VMs inside this namespace and doesn't require additional configuration, at least from network config side.
 
-Create a file for the VM configuration, like here in the file `nad-namespace-vm4-l2nad.yaml`:
+Create a file for the VM configuration, like here in the file `udn-namespace-vm4-l2udn.yaml`:
 
 ```
-!!!include(nad-namespace-vm4-l2nad.yaml)!!!
+!!!include(udn-namespace-vm4-l2udn.yaml)!!!
 ```
 
 Create the VM.
 
 ```
-oc create -f nad-namespace-vm4-l2nad.yaml
+oc create -f udn-namespace-vm4-l2udn.yaml
 ```
 
 Create another VM inside the same namespace like the one before.
-From the code example above, the VM name should be changed in all occurences to e.g. rhel8-vm5.\
+From the code example above, the VM name should be changed in all occurences to e.g. rhel8-vm5.
 
 ## Check communication
 
@@ -193,7 +201,7 @@ rhel8-vm4 login: [root@acm41-jump ns-4]#
 ...
 ```
 
-## Check IP addresses and communication one of the VMs is live migrated to another node
+## Check IP addresses and communication after one of the VMs is live migrated to another node
 
 Check the current location the VMs and start live migration of one of the VMs.
 Login to the VM migrated and try to ping the peer VM. Check that the VM got migrated to another node. There should be no change to IP address or the migrated VM and the peer VM should be reachable still using ping.

@@ -1,0 +1,19 @@
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: udn-cluster-primary-l2
+spec:
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: In
+      values: ["namespace-5", "namespace-6"]
+  network:
+    topology: Layer2
+    layer2:
+      role: Primary 
+      subnets:
+        - "192.168.22.0/24"
+      ipam:
+        lifecycle: Persistent
+      

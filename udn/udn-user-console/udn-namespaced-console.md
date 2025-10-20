@@ -2,7 +2,7 @@
 
 Goal: As an administrator, I want to create private networks within a namespace that VMs can communicate on without the need of an additional network and no external access. I want to use the UI console only.
 
-An overview is available in [Overview to local networks](nad-overview.md).
+An overview is available in [Overview to local networks](udn-overview.md).
 
 Namespace specific NADs can be used to provide an isolated local network that is not using the pod subnet. This is useful if an administrator needs to isolate any communication between pods or VMs from any other network and the potential access from unauthorized resources.
 
@@ -23,13 +23,21 @@ Using the main menu, create a namespace but directly during creation, specify th
 
 ![UI use to create a namespace - main menu](images/create-namespace-menu.png)
 
-![UI: create first namespace with the specific label applied:](images/create-namespace-nad.png)
+![UI: create first namespace with the specific label applied:](images/create-namespace-udn.png)
 
-![UI: create second namespace with the specific label applied:](images/create-namespace-nad2.png)
+![UI: create second namespace with the specific label applied:](images/create-namespace-udn2.png)
 
 ## 2. Optional: Inform yourself about networks in use with the individual hypervisor cluster
 
-Since the UDN traffic is encapsulated anyways when travelling over the cluster and host network, there shouldn't be any clashes. However, using different CIDRs might ease any troubleshooting when not having overlapping use of CIDRs in different layers of the network.
+Since the UDN traffic is encapsulated anyways when travelling over the cluster and host network, there shouldn't be any clashes.
+
+However, regarding the cluster network, there should be no overlapping of the ranges with the UDN. The default network will still be connected to the pod for metrics purposes, at least, and an overlapping might produce unpredictable routing for the VM traffic.
+
+With regards to other UDNs configured, there should be - naturally - no overlapping at all within the same VM. UDNs configured for other namespaces might use the same chosen CIDR without any issues.
+
+With regards to perhaps cluster UDNs, overlapping of CIDRs must be avoided too. If an admin is allowed to create namespaced UDNs, one should check for possible cluster UDNs configured for the affected namespaces.
+
+With regards to the host network, using different CIDRs might ease any troubleshooting when not having overlapping use of CIDRs in different layers of the network.
 
 Prepare for creating a UDN with a specific CIDR. The IP addresses for the VMs in primary UDNs with a layer 2 topology are provided automatically. A VM would need to use DHCP to configure the network interface in order to be able to use the layer 2 network properly. Those assigned IP addresses will be retained automatically to avoid handing out the same IP address to different instance upon reboot or migrating VMs.
 
@@ -99,7 +107,7 @@ Login to the console of one of the newly created VMs and check check with ping t
 The peer VM inside the same namespace should be responding to the ping:\
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-to-vm2-ping.png)
 
-## Check IP addresses and communication one of the VMs is live migrated to another node
+## Check IP addresses and communication after one of the VMs is live migrated to another node
 
 Check the actual nodes the VMs are running on:\
 ![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-pre.png)
