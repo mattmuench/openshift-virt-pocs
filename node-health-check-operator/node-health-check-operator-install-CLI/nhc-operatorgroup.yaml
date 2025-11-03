@@ -1,0 +1,11 @@
+# nhc-operator-group.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-nhc-operatorgroup
+  namespace: openshift-operators
+spec:
+  # The targetNamespaces field is often omitted for cluster-scope operators, 
+  # or set to the installation namespace.
+  targetNamespaces:
+  - openshift-operators

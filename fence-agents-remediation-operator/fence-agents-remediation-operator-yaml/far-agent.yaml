@@ -1,0 +1,54 @@
+apiVersion: remediation.medik8s.io/v1alpha1
+kind: FenceAgentsRemediationTemplate
+metadata:
+  name: ipmi-remediation-template
+  namespace: openshift-workload-availability # FAR Operator's namespace
+spec:
+  # The name of the fencing agent to be executed.
+  # fence_ipmilan is standard for IPMI.
+  agent: fence_ipmilan
+
+  # Cluster-wide parameters, typically non-sensitive configuration shared by all nodes.
+  sharedParameters:
+    # Use the 'on' or 'off' action for power control (reboot is implied by FAR flow).
+    - name: 'action'
+      value: 'reboot'
+    # The default username to access the IPMI BMC interface.
+    # Note: Sensitive data like the password should be in a Secret.
+    - name: 'username'
+      value: 'bmc_user'
+    # Specify the LAN protocol level.
+    - name: 'lanplus'
+      value: '1'
+    # Set the logging level for the fence agent script.
+    - name: 'verbose'
+      value: '1'
+
+  # Node-specific parameters. These are Templated using Go Template syntax.
+  nodeParameters:
+    # The IP address of the node's BMC/IPMI interface.
+    # We use the {{ .Name }} Go template to inject the name of the unhealthy node 
+    # to look up the IP/hostname dynamically.
+    - name: 'ip'
+      value: '{{ .Name }}-bmc-ip' # This value often needs dynamic mapping or DNS resolution
+    # The host's password is stored in a Secret, referenced below.
+    - name: 'password'
+      value: '{{ .Name }}-bmc-password'
+
+  # The remediation strategy to apply.
+  remediationStrategy: OutOfServiceTaint
+
+  # Secret containing the cluster-wide password if 'sharedParameters' uses it.
+  # This is usually omitted if a Secret per node is used (see nodeSecretNames).
+  # sharedSecretName: fence-agents-credentials-shared
+
+  # Mapping of node names to unique Secrets containing node-specific credentials.
+  # The {{ .Name }} template is crucial here to dynamically reference the node.
+  nodeSecretNames:
+    - name: 'password'
+      secretName: '{{ .Name }}-bmc-secret'
+
+  # Configuration for retries and timeouts if the fencing attempt fails.
+  retryCount: 5
+  retryInterval: '10s'
+  timeout: '120s'

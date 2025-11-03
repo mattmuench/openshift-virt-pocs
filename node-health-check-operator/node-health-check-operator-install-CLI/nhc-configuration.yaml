@@ -1,0 +1,32 @@
+# my-worker-nhc.yaml
+apiVersion: remediation.medik8s.io/v1alpha1
+kind: NodeHealthCheck
+metadata:
+  name: nhc-worker-default
+spec:
+  # 1. Node Selection: Targets all worker nodes
+  selector:
+    matchLabels:
+      node-role.kubernetes.io/worker: ""
+  
+  # 2. Unhealthy Conditions: Defines what state is considered unhealthy
+  unhealthyConditions:
+    - type: Ready
+      status: "False"
+      duration: 300s # 5 minutes
+    - type: Ready
+      status: Unknown
+      duration: 300s # 5 minutes
+
+  # 3. Remediation Action: Specifies the template to use (e.g., for reboot or deletion)
+  # IMPORTANT: The 'remediationTemplate' must point to a valid template created 
+  # by a separate Remediation Operator (like Self Node Remediation)
+  remediationTemplate:
+    apiVersion: remediation.medik8s.io/v1alpha1
+    kind: SelfNodeRemediationTemplate # Example: Use the Self Node Remediation template
+    name: self-node-remediation-template-automatic-strategy 
+    namespace: openshift-operators
+
+  # 4. Cluster Health Guard: Prevents remediation if too many nodes are unhealthy
+  # Remediation is only started if at least 51% of the selected nodes are healthy.
+  minHealthy: "51%"

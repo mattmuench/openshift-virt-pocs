@@ -1,0 +1,2 @@
+OVN-Kubernetes also provides secondary network options, which can especially be useful when the host has a single network interface which cannot be used by additional networks directly. Note: Otherwise, to connect a bridge to the default OVN interface a VLAN must first be created on the host interface, see Attach the default NIC to a bridge while using OVN Kubernetes for more information.
+see: https://access.redhat.com/articles/6994974 OVN-Kubernetes additional networks section

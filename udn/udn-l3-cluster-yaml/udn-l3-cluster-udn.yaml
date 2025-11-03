@@ -1,0 +1,17 @@
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: udn-cluster-primary-l3
+spec:
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: In
+      values: ["namespace-7", "namespace-8"]
+  network:
+    topology: Layer3
+    layer3:
+      role: Primary 
+      subnets:
+        - cidr: "192.168.24.0/24"
+          hostSubnet: 25
