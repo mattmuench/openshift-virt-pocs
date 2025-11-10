@@ -178,3 +178,11 @@ data:
 secret/master1-bmc-secret created
 [root@ocp68-jump far-install]#
 ```
+
+## Create node specific configuration for Redfish
+
+For getting the systems UUID, execute towards the Redfish access point:
+`curl -k -u [username]:[password] https://<CIMC_IP_Address>/redfish/v1/Systems`
+One can find it in the URI in @odata.id value.
+
+In Cisco UCS web interface, access the CIMC web interface, switch to the server overview and check there for UUID or System UUID.

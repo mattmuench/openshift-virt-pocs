@@ -1,0 +1,33 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: nad-vm1
+  namespace: default
+spec:
+  config: |-
+    {
+        "cniVersion": "0.4.0",
+        "name": "ln-1",
+        "type": "ovn-k8s-cni-overlay",
+        "netAttachDefName": "default/nad-vm1",
+        "topology": "localnet",
+        "vlanID": 303,
+        "ipam": {}
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: nad-vm2
+  namespace: default
+spec:
+  config: |-
+    {
+        "cniVersion": "0.4.0",
+        "name": "ln-2",
+        "type": "ovn-k8s-cni-overlay",
+        "netAttachDefName": "default/nad-vm2",
+        "topology": "localnet",
+        "vlanID": 3306,
+        "ipam": {}
+    }

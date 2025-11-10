@@ -1,0 +1,31 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vm-networks
+spec:
+  desiredState:
+    interfaces:
+      - bridge:
+          allow-extra-patch-ports: true
+          options:
+            stp: false
+          port:
+            - name: enp4s0u2u4
+            - name: br-vm
+        name: br-vm
+        state: up
+        type: ovs-bridge
+    ovn:
+      bridge-mappings:
+        - bridge: br-vm
+          localnet: ln-1
+          state: present
+        - bridge: br-vm
+          localnet: ln-2
+          state: present
+        - bridge: br-vm
+          localnet: ln-3
+          state: present
+        - bridge: br-vm
+          localnet: ln-4
+          state: present

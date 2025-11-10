@@ -1,0 +1,30 @@
+apiVersion: fence-agents-remediation.medik8s.io/v1alpha1
+kind: FenceAgentsRemediationTemplate
+metadata:
+  name: fenceagentsremediationtemplate-default
+  namespace: openshift-workload-availability
+spec:
+  template:
+    spec:
+      nodeparameters:
+        '--ip':
+          master1: '192.168.232.1'
+          master2: '192.168.232.2'
+          master3: '192.168.232.3'
+        '--username':
+          master1: 'root'
+          master2: 'root'
+          master3: 'root'
+        '--password':
+          master1: 'password'
+          master2: 'password'
+          master3: 'password'
+        '--systems-uri':
+          master1: '/redfish/v1/Systems/d833bbd6-c0fd-4cb7-843c-ad6a9f0f32ac'
+          master2: '/redfish/v1/Systems/80db3a4f-930c-4f5f-b4d0-cf18356fe9a5'
+          master3: '/redfish/v1/Systems/80db3a4f-930c-4f5f-b4d0-cf18356fe9a5'
+      sharedparameters:
+        '--ssl-insecure': ''
+        '--ipport': '8000'
+        '--redfish-uri': '/redfish/v1'
+      agent: fence_redfish

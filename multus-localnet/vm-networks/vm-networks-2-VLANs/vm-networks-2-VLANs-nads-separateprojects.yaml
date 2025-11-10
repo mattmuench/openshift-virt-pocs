@@ -1,0 +1,67 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: nad-vmnet-1-project1
+  namespace: project1
+spec:
+  config: |-
+    {
+        "cniVersion": "0.4.0",
+        "name": "ln-1",
+        "type": "ovn-k8s-cni-overlay",
+        "netAttachDefName": "project1/nad-vmnet-1-project1",
+        "topology": "localnet",
+        "vlanID": 303,
+        "ipam": {}
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: nad-vmnet-1-project2
+  namespace: project2
+spec:
+  config: |-
+    {
+        "cniVersion": "0.4.0",
+        "name": "ln-2",
+        "type": "ovn-k8s-cni-overlay",
+        "netAttachDefName": "project2/nad-vmnet-1-project2",
+        "topology": "localnet",
+        "vlanID": 303,
+        "ipam": {}
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: nad-vmnet-2-project1
+  namespace: project1
+spec:
+  config: |-
+    {
+        "cniVersion": "0.4.0",
+        "name": "ln-3",
+        "type": "ovn-k8s-cni-overlay",
+        "netAttachDefName": "project1/nad-vmnet-2-project1",
+        "topology": "localnet",
+        "vlanID": 3306,
+        "ipam": {}
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: nad-vmnet-2-project2
+  namespace: project2
+spec:
+  config: |-
+    {
+        "cniVersion": "0.4.0",
+        "name": "ln-4",
+        "type": "ovn-k8s-cni-overlay",
+        "netAttachDefName": "project2/nad-vmnet-2-project2",
+        "topology": "localnet",
+        "vlanID": 3306,
+        "ipam": {}
+    }
