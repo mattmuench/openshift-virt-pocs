@@ -1,6 +1,8 @@
-# Installing the base ACM - using the console
+# Enable Multicluster observability - using the console
 
 ## 1. Install the operator
+
+##### ALL THIS IS C&P - OLD STUFF
 
 From Operator Hub, select the ACM and install it:
 
