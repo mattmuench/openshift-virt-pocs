@@ -10,26 +10,26 @@
 
 ![MTV operator install](images/mtv-operator-console-installComplete.png)
 
-<br><br>Directly click Create ForkliftController. <br><br>
+<br><br>{:.red} Directly click Create ForkliftController. <br><br>
 
 ![MTV ForkliftController settings 1](images/mtv-operator-console-fc-create-1.png)
 
 ![MTV ForkliftController settings 2](images/mtv-operator-console-fc-create-2.png)
 
-<br>Change the fields that have `Select` in the name: <br>
+<br><br>Change the fields that have `Select` in the name: <br><br>
 ![MTV ForkliftController Select settings](images/mtv-operator-console-fc-create-4.png)
 
 ![MTV ForkliftController configs](images/mtv-operator-console-fc-create-3.png)
 
-<br>Complete the rest of the entries as desired. An example configuration selection is shown: <br>
+<br><br>Complete the rest of the entries as desired. An example configuration selection is shown: <br>
 ![MTV ForkliftController complete settings](images/mtv-operator-console-fc-create-5.png)
 
-<br>Once ready, click `Create`.<br>
+<br><br>Once ready, click `Create`.<br>
 
 Check the defined ForkliftControllers and make sure, it's in state `Running`. <br>
 ![MTV ForkliftController running](images/mtv-operator-console-fc-running.png)
 
-<br>Check the actual installation:<br>
+<br><br>Check the actual installation:<br>
 
 ```
 [root@clustername-jump vddk]# oc get -n openshift-mtv forkliftcontroller
