@@ -10,7 +10,7 @@
 
 ![MTV operator install](images/mtv-operator-console-installComplete.png)
 
-<br><br>{:.red} Directly click Create ForkliftController. <br><br>
+<br><br>**Directly click Create ForkliftController.** <br><br>
 
 ![MTV ForkliftController settings 1](images/mtv-operator-console-fc-create-1.png)
 
