@@ -33,7 +33,7 @@ To create one for an external cluster:
 
 Depending on the source cluster flavor, any of the following providers must be prepared.
 
-[=> see: vSphere](mtv-provider-vsphere-console/mtv-provider-ocp-console.md)
+[=> see: vSphere](mtv-provider-vsphere-console/mtv-provider-vsphere-console.md)
 
 ## 4 Check for requirements of VMs to be migrated
 
