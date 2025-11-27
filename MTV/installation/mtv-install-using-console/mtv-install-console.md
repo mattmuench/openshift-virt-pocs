@@ -10,26 +10,26 @@
 
 ![MTV operator install](images/mtv-operator-console-installComplete.png)
 
-Directly click Create ForkliftController.
+<br>Directly click Create ForkliftController. <br>
 
 ![MTV ForkliftController settings 1](images/mtv-operator-console-fc-create-1.png)
 
 ![MTV ForkliftController settings 2](images/mtv-operator-console-fc-create-2.png)
 
-Change the fields that have `Select` in the name:  
+<br>Change the fields that have `Select` in the name: <br>
 ![MTV ForkliftController Select settings](images/mtv-operator-console-fc-create-4.png)
 
 ![MTV ForkliftController configs](images/mtv-operator-console-fc-create-3.png)
 
-Complete the rest of the entries as desired. An example configuration selection is shown:  
+<br>Complete the rest of the entries as desired. An example configuration selection is shown: <br>
 ![MTV ForkliftController complete settings](images/mtv-operator-console-fc-create-5.png)
 
-Once ready, click `Create`.
+<br>Once ready, click `Create`.<br>
 
-Check the defined ForkliftControllers and make sure, it's in state `Running`.  
+Check the defined ForkliftControllers and make sure, it's in state `Running`. <br>
 ![MTV ForkliftController running](images/mtv-operator-console-fc-running.png)
 
-Check the actual installation:
+<br>Check the actual installation:<br>
 
 ```
 [root@clustername-jump vddk]# oc get -n openshift-mtv forkliftcontroller
@@ -91,10 +91,10 @@ route.route.openshift.io/forklift-services       forklift-services-openshift-mtv
 [root@clustername-jump vddk]#
 ```
 
-Check the defined ForkliftControllers and make sure, it's in state `Running, Successful`.  
+<br>Check the defined ForkliftControllers and make sure, it's in state `Running, Successful`. <br>
 ![MTV ForkliftController list](images/mtv-operator-console-fc-running-successful.png)
 
-Note that the tuning the configuration is possible in the UI under: `Migration for Virtualization`=>`Overview` in the submenu `Settings`:  
+<br>Note that the tuning the configuration is possible in the UI under: `Migration for Virtualization`=>`Overview` in the submenu `Settings`: <br>
 ![MTV ForkliftController changing settings](images/mtv-operator-console-fc-settings-ui.png)
 
-See also [MTV toolkit Planning Guide](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.10/html-single/planning_your_migration_to_red_hat_openshift_virtualization/index#configuring-mtv-operator_mtv)
+<br>See also [MTV toolkit Planning Guide](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.10/html-single/planning_your_migration_to_red_hat_openshift_virtualization/index#configuring-mtv-operator_mtv)
