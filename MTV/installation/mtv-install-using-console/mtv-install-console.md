@@ -23,7 +23,7 @@
 
 ![MTV ForkliftController configs](images/mtv-operator-console-fc-create-3.png)
 
-<br><br>**Complete the rest of the entries as desired. An example configuration selection is shown:** <br>
+<br><br>**Complete the rest of the entries as desired. An example configuration selection is shown:** <br><br>
 ![MTV ForkliftController complete settings](images/mtv-operator-console-fc-create-5.png)
 
 <br><br>**Once ready, click `Create`.**<br><br>
