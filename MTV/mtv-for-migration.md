@@ -27,7 +27,7 @@ To create one for the local OpenShift Virtualization cluster:
 [=> see: MTV provider for the local Openshift Virtualization](mtv-provider-ocp/mtv-provider-ocp-console-local/mtv-provider-ocp-console-local.md)
 
 To create one for an external cluster:
-[=> see: MTV provider for Openshift Virtualization](mtv-provider-ocp/mtv-provider-ocp-console/mtv-provider-ocp-console.md)
+[=> see: MTV provider for Openshift Virtualization - does not work yet](dontuse-mtv-provider-ocp/mtv-provider-ocp-console/mtv-provider-ocp-console.md)
 
 ## 3 Prepare the source cluster for migrating VMs
 
