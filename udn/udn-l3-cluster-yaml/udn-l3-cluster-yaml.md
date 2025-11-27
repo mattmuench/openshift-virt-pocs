@@ -17,10 +17,10 @@ Due to the nature of the layer 3 network being distributed as subnet ranges per 
 Because of changes of the IP address, the useability for VMs is limited under normal conditions. However, even the overall high number of VMs on a single network could be questionable. In any case, if the desire is there, any measures to get to the right VM must be taken in order to let the communication peers understand the actual IP address of an instance. A measure could be to configure a load balancer to cover a whole network if the VMs in question form a scalable service.
 
 **Note:**
-"Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
+"Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [=> UDNs](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
 
 **Note:**
-"You must consider the following limitations before implementing a primary UDN [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
+"You must consider the following limitations before implementing a primary UDN [=> primary UDN limitations](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
 
 - You cannot use the virtctl ssh command to configure SSH access to a VM.
 - You cannot use the oc port-forward command to forward ports to a VM.
@@ -57,7 +57,7 @@ In order to avoid potential clashes with cluster networks in use, one would chec
 Example:
 
 ```
-[root@acm41-jump ~]# oc get -o yaml networks.config.openshift.io cluster
+[username@clustername-jump ~]# oc get -o yaml networks.config.openshift.io cluster
 apiVersion: config.openshift.io/v1
 kind: Network
 metadata:
@@ -75,7 +75,7 @@ spec:
   - 172.30.0.0/16
 status:
 ...
-[root@acm41-jump ~]#
+[username@clustername-jump ~]#
 ```
 
 In the above example, the used networks are the one for _clusterNetwork_ being `10.128.0.0/14` and the _serviceNetwork_ being `172.30.0.0./16`. These settings are configured during cluster installation and are specific to the individual configuration.
@@ -103,22 +103,22 @@ oc create -f udn-l3-cluster-udn.yaml
 Check the resource is being created.
 
 ```
-[root@acm41-jump ns-7]# oc get -A clusteruserdefinednetwork
+[username@clustername-jump ns-7]# oc get -A clusteruserdefinednetwork
 NAME                     AGE
 udn-cluster-primary-l3   25s
-[root@acm41-jump ns-7]#
+[username@clustername-jump ns-7]#
 ```
 
 Once a cluster scoped UDN is configured, automatically it's provided to the namespaces through a Network Attachment Definiton (NAD) using the same name as the UDN.
 
 ```
-[root@acm41-jump ns-7]# oc get -n namespace-7 network-attachment-definitions
+[username@clustername-jump ns-7]# oc get -n namespace-7 network-attachment-definitions
 NAME                     AGE
 udn-cluster-primary-l3   70s
-[root@acm41-jump ns-7]# oc get -n namespace-8 network-attachment-definitions
+[username@clustername-jump ns-7]# oc get -n namespace-8 network-attachment-definitions
 NAME                     AGE
 udn-cluster-primary-l3   78s
-[root@acm41-jump ns-7]#
+[username@clustername-jump ns-7]#
 ```
 
 **Note:** Only one primary UDN can be created in any namespace. If a user wanted to use additional networks, secondary networks must have been created and provisioned in addition.
@@ -138,16 +138,16 @@ Create a file for the VM configuration, like here in the file `udn-cluster-vm6-l
 Create the VM and check for the VM being created. Record the IP address assigned to the VM as primary IP address.
 
 ```
-[root@acm41-jump ns-7]# oc apply -f vm8-ns7.yaml
+[username@clustername-jump ns-7]# oc apply -f vm8-ns7.yaml
 virtualmachine.kubevirt.io/rhel8-vm8 created
-[root@acm41-jump ns-7]#
-[root@acm41-jump ns-7]# oc -n namespace-7 get vm,vmi
+[username@clustername-jump ns-7]#
+[username@clustername-jump ns-7]# oc -n namespace-7 get vm,vmi
 NAME                                   AGE   STATUS    READY
 virtualmachine.kubevirt.io/rhel8-vm8   47s   Running   True
 
 NAME                                           AGE   PHASE     IP             NODENAME                    READY
-virtualmachineinstance.kubevirt.io/rhel8-vm8   43s   Running   192.168.24.6   master1.acm41.dslab.local   True
-[root@acm41-jump ns-7]#
+virtualmachineinstance.kubevirt.io/rhel8-vm8   43s   Running   192.168.24.6   master1.clustername.labname.local   True
+[username@clustername-jump ns-7]#
 ```
 
 Create another VM inside the other namespace like the one before.
@@ -155,13 +155,13 @@ From the code example above, the VM name should be changed in all occurences to 
 Check for the VM being created. Record the IP address assigned to the VM as primary IP address.
 
 ```
-[root@acm41-jump ns-7]# oc -n namespace-8 get vm,vmi
+[username@clustername-jump ns-7]# oc -n namespace-8 get vm,vmi
 NAME                                   AGE   STATUS    READY
 virtualmachine.kubevirt.io/rhel8-vm9   44s   Running   True
 
 NAME                                           AGE   PHASE     IP              NODENAME                    READY
-virtualmachineinstance.kubevirt.io/rhel8-vm9   40s   Running   192.168.24.11   master1.acm41.dslab.local   True
-[root@acm41-jump ns-7]#
+virtualmachineinstance.kubevirt.io/rhel8-vm9   40s   Running   192.168.24.11   master1.clustername.labname.local   True
+[username@clustername-jump ns-7]#
 ```
 
 Note that both VMs running in different namespaces but having an IP address automatically assign from the desired IP subnet. Note also that both VMs are created on the same host, which is by fortune.
@@ -173,7 +173,7 @@ Record the network addresses assigned to the VMs on the default network - on the
 Login to the console of one of the newly created VMs and check with ping that the network connection is working.
 
 ```
-[root@acm41-jump ns-5]# virtctl console -n namespace-5 rhel8-vm6
+[username@clustername-jump ns-5]# virtctl console -n namespace-5 rhel8-vm6
 Successfully connected to rhel8-vm6 console. The escape sequence is ^]
 
 Red Hat Enterprise Linux 8.10 (Ootpa)
@@ -219,51 +219,51 @@ Login to the VM migrated and try to ping the peer VM. Check that the VM got migr
 Example:
 
 ```
-[root@acm41-jump ns-5]# oc get -n namespace-5 vmi
+[username@clustername-jump ns-5]# oc get -n namespace-5 vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm6   18m   Running   192.168.22.3   master1.acm41.dslab.local   True
-[root@acm41-jump ns-5]# oc get -n namespace-6 vmi
+rhel8-vm6   18m   Running   192.168.22.3   master1.clustername.labname.local   True
+[username@clustername-jump ns-5]# oc get -n namespace-6 vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm7   15m   Running   192.168.22.4   master1.acm41.dslab.local   True
-[root@acm41-jump ns-5]#
+rhel8-vm7   15m   Running   192.168.22.4   master1.clustername.labname.local   True
+[username@clustername-jump ns-5]#
 ```
 
 In this case, both VMs running on master1. Now, migrate the VM rhel8-vm6. Check for the new location and make sure that the other VM didn't migrate silently.
 
 ```
-[root@acm41-jump ~]# oc get vmi
+[username@clustername-jump ~]# oc get vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm8   21h   Running   192.168.24.6   master1.acm41.dslab.local   True
-[root@acm41-jump ~]# oc get -n namespace-8 vmi
+rhel8-vm8   21h   Running   192.168.24.6   master1.clustername.labname.local   True
+[username@clustername-jump ~]# oc get -n namespace-8 vmi
 NAME        AGE   PHASE     IP              NODENAME                    READY
-rhel8-vm9   21h   Running   192.168.24.11   master1.acm41.dslab.local   True
-[root@acm41-jump ~]# virtctl migrate rhel8-vm8
+rhel8-vm9   21h   Running   192.168.24.11   master1.clustername.labname.local   True
+[username@clustername-jump ~]# virtctl migrate rhel8-vm8
 VM rhel8-vm8 was scheduled to migrate
-[root@acm41-jump ~]# oc get vmi
+[username@clustername-jump ~]# oc get vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm8   21h   Running   192.168.24.6   master1.acm41.dslab.local   True
-[root@acm41-jump ~]# oc get vmi
+rhel8-vm8   21h   Running   192.168.24.6   master1.clustername.labname.local   True
+[username@clustername-jump ~]# oc get vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm8   21h   Running   192.168.24.6   master1.acm41.dslab.local   True
-[root@acm41-jump ~]# oc get vmi
+rhel8-vm8   21h   Running   192.168.24.6   master1.clustername.labname.local   True
+[username@clustername-jump ~]# oc get vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm8   21h   Running   192.168.24.6   master1.acm41.dslab.local   True
-[root@acm41-jump ~]# oc get vm,vmi
+rhel8-vm8   21h   Running   192.168.24.6   master1.clustername.labname.local   True
+[username@clustername-jump ~]# oc get vm,vmi
 NAME                                   AGE   STATUS    READY
 virtualmachine.kubevirt.io/rhel8-vm8   21h   Running   True
 
 NAME                                           AGE   PHASE     IP               NODENAME                    READY
-virtualmachineinstance.kubevirt.io/rhel8-vm8   21h   Running   192.168.24.132   master2.acm41.dslab.local   True
-[root@acm41-jump ~]# oc get vmi
+virtualmachineinstance.kubevirt.io/rhel8-vm8   21h   Running   192.168.24.132   master2.clustername.labname.local   True
+[username@clustername-jump ~]# oc get vmi
 NAME        AGE   PHASE     IP               NODENAME                    READY
-rhel8-vm8   21h   Running   192.168.24.132   master2.acm41.dslab.local   True
-[root@acm41-jump ~]#
+rhel8-vm8   21h   Running   192.168.24.132   master2.clustername.labname.local   True
+[username@clustername-jump ~]#
 ```
 
 Check connectivity from the VM to the other VM
 
 ```
-[root@acm41-jump ns-5]# virtctl console -n namespace-5 rhel8-vm6
+[username@clustername-jump ns-5]# virtctl console -n namespace-5 rhel8-vm6
 Successfully connected to rhel8-vm6 console. The escape sequence is ^]
 
 Red Hat Enterprise Linux 8.10 (Ootpa)

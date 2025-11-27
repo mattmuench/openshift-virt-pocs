@@ -6,14 +6,14 @@ Local network resources can be created as cluster wide or namespace scoped resou
 Cluster wide NAD resources can be consumed by any VM administrator for providing connectivity between VMs across namespaces.
 Namespace scoped NAD can be used to connect VMs across selected namespaces exclusively.
 
-**Kinds of local networks**\
+**Kinds of local networks**  
 Local networks can be created as layer 2 or layer 3 networks.
 
 Cluster scoped UDNs are created on the default namespace.
 
 In order to create namespace scoped UDNs, those namespaces must have been created using a `k8s.ovn.org/primary-user-defined-network` label. In adition, the UDN definition must mention the namespaces that it should be only available to.
 
-**Avoiding overlapping**\
+**Avoiding overlapping**  
 Since the UDN traffic is encapsulated anyways when travelling over the cluster and host network, there shouldn't be any clashes.
 
 However, regarding the cluster network, there should be no overlapping of the ranges with the UDN. The default network will still be connected to the pod for metrics purposes, at least, and an overlapping might produce unpredictable routing for the VM traffic.

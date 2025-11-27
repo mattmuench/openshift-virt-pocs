@@ -31,12 +31,12 @@ Using CUDN laayer2 on localnet with access to/from other external network.
 
 ### local networks for large subnets
 
-Using UDN layer3 on localnet with access to/from other external network. Is this possible without BGP ?
+Using UDN layer3 on localnet with access to/from other external network. Is this possible without BGP ? => It wouldn't make sense without load balancing and BGP.
 In OCP 4.19, this is not working (at all) for VMs.
 
 ### local networks for large subnets connecting different namespaces
 
-Using CUDN layer3 on localnet with access to/from other external network. Is this possible without BGP ?
+Using CUDN layer3 on localnet with access to/from other external network. Is this possible without BGP ? => It wouldn't make sense without load balancing and BGP.
 In OCP 4.19, this is not working (at all) for VMs.
 
 ## local networks with VLANs (external access)

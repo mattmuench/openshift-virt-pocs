@@ -7,10 +7,10 @@ An overview is available in [Overview to local networks](udn-overview.md).
 Namespace specific NADs can be used to provide an isolated local network that is not using the pod subnet. This is useful if an administrator needs to isolate any communication between pods or VMs from any other network and the potential access from unauthorized resources.
 
 **Note:**
-"Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
+"Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [=> UDNs](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
 
 **Note:**
-"You must consider the following limitations before implementing a primary UDN [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
+"You must consider the following limitations before implementing a primary UDN [=> primary UDN limitations](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
 
 - You cannot use the virtctl ssh command to configure SSH access to a VM.
 - You cannot use the oc port-forward command to forward ports to a VM.
@@ -53,7 +53,7 @@ In order to avoid potential clashes with cluster networks in use, one would chec
 Example:
 
 ```
-[root@acm41-jump ~]# oc get -o yaml networks.config.openshift.io cluster
+[username@clustername-jump ~]# oc get -o yaml networks.config.openshift.io cluster
 apiVersion: config.openshift.io/v1
 kind: Network
 metadata:
@@ -71,7 +71,7 @@ spec:
   - 172.30.0.0/16
 status:
 ...
-[root@acm41-jump ~]#
+[username@clustername-jump ~]#
 ```
 
 In the above example, the used networks are the one for _clusterNetwork_ being `10.128.0.0/14` and the _serviceNetwork_ being `172.30.0.0./16`. These settings are configured during cluster installation and are specific to the individual configuration.
@@ -99,19 +99,19 @@ oc create -f udn-namespaced-udn.yaml
 Check the resource is being created.
 
 ```
-[root@acm41-jump ns-4]# oc get -n namespace-4 userdefinednetwork
+[username@clustername-jump ns-4]# oc get -n namespace-4 userdefinednetwork
 NAME             AGE
 udn-primary-l2   35s
-[root@acm41-jump ns-4]#
+[username@clustername-jump ns-4]#
 ```
 
 Once a namespace scoped UDN is configured, automatically it's provided to the namespace through a Network Attachment Definiton (NAD) using the same name as the UDN.
 
 ```
-[root@acm41-jump ~]# oc get -n namespace-4 network-attachment-definitions
+[username@clustername-jump ~]# oc get -n namespace-4 network-attachment-definitions
 NAME          AGE
 primary-udn   2d18h
-[root@acm41-jump ~]#
+[username@clustername-jump ~]#
 ```
 
 **Note:** Only one primary UDN can be created in any namespace. If a user wanted to use additional networks, secondary networks must have been created and provisioned in addition.
@@ -142,21 +142,21 @@ From the code example above, the VM name should be changed in all occurences to 
 Record the network address assigned to the VM on the default network on the VM overview.
 
 ```
-[root@acm41-jump ns-4]# oc get -n namespace-4 vm,vmi
+[username@clustername-jump ns-4]# oc get -n namespace-4 vm,vmi
 NAME                                   AGE   STATUS    READY
 virtualmachine.kubevirt.io/rhel8-vm4   43s   Running   True
 virtualmachine.kubevirt.io/rhel8-vm5   36s   Running   True
 
 NAME                                           AGE   PHASE     IP             NODENAME                    READY
-virtualmachineinstance.kubevirt.io/rhel8-vm4   38s   Running   192.168.21.3   master0.acm41.dslab.local   True
-virtualmachineinstance.kubevirt.io/rhel8-vm5   32s   Running   192.168.21.4   master0.acm41.dslab.local   True
-[root@acm41-jump ns-4]#
+virtualmachineinstance.kubevirt.io/rhel8-vm4   38s   Running   192.168.21.3   master0.clustername.labname.local   True
+virtualmachineinstance.kubevirt.io/rhel8-vm5   32s   Running   192.168.21.4   master0.clustername.labname.local   True
+[username@clustername-jump ns-4]#
 ```
 
 Login to the console of one of the newly created VMs and check check with ping the network connection is working.
 
 ```
-[root@acm41-jump ns-4]# virtctl console -n namespace-4 rhel8-vm4
+[username@clustername-jump ns-4]# virtctl console -n namespace-4 rhel8-vm4
 Successfully connected to rhel8-vm4 console. The escape sequence is ^]
 
 Red Hat Enterprise Linux 8.10 (Ootpa)
@@ -197,7 +197,7 @@ Kernel 4.18.0-553.70.1.el8_10.x86_64 on an x86_64
 
 Activate the web console with: systemctl enable --now cockpit.socket
 
-rhel8-vm4 login: [root@acm41-jump ns-4]#
+rhel8-vm4 login: [username@clustername-jump ns-4]#
 ...
 ```
 
@@ -209,17 +209,17 @@ Login to the VM migrated and try to ping the peer VM. Check that the VM got migr
 Example:
 
 ```
-[root@acm41-jump ns-4]# oc get -n namespace-4 vmi
+[username@clustername-jump ns-4]# oc get -n namespace-4 vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm4   24m   Running   192.168.21.3   master1.acm41.dslab.local   True
-rhel8-vm5   24m   Running   192.168.21.4   master1.acm41.dslab.local   True
-[root@acm41-jump ns-4]# virtctl migrate rhel8-vm4
+rhel8-vm4   24m   Running   192.168.21.3   master1.clustername.labname.local   True
+rhel8-vm5   24m   Running   192.168.21.4   master1.clustername.labname.local   True
+[username@clustername-jump ns-4]# virtctl migrate rhel8-vm4
 VM rhel8-vm4 was scheduled to migrate
-[root@acm41-jump ns-4]# oc get -n namespace-4 vmi
+[username@clustername-jump ns-4]# oc get -n namespace-4 vmi
 NAME        AGE   PHASE     IP             NODENAME                    READY
-rhel8-vm4   25m   Running   192.168.21.3   master0.acm41.dslab.local   True
-rhel8-vm5   25m   Running   192.168.21.4   master1.acm41.dslab.local   True
-[root@acm41-jump ns-4]# virtctl console -n namespace-4 rhel8-vm4
+rhel8-vm4   25m   Running   192.168.21.3   master0.clustername.labname.local   True
+rhel8-vm5   25m   Running   192.168.21.4   master1.clustername.labname.local   True
+[username@clustername-jump ns-4]# virtctl console -n namespace-4 rhel8-vm4
 Successfully connected to rhel8-vm4 console. The escape sequence is ^]
 
 Red Hat Enterprise Linux 8.10 (Ootpa)
@@ -261,5 +261,5 @@ Kernel 4.18.0-553.70.1.el8_10.x86_64 on an x86_64
 
 Activate the web console with: systemctl enable --now cockpit.socket
 
-rhel8-vm4 login: [root@acm41-jump ns-4]#
+rhel8-vm4 login: [username@clustername-jump ns-4]#
 ```

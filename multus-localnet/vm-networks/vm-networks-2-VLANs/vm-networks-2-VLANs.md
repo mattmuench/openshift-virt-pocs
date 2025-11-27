@@ -28,7 +28,7 @@ Alternatively, if the NADs should be available only to specific namespaces, each
 !!!include(vm-networks-2-VLANs-nads-defauilt.yaml)!!!
 ```
 
-Since the NADs should be available only to specific namespaces, each namespace must use it's own defintion of the NAD using the smae definitions. In turn, more bridge-mappings must be configured for the NNCP:
+Since the NADs should be available only to specific namespaces, each namespace must use it's own defintion of the NAD using the same definitions. In turn, more bridge-mappings must be configured for the NNCP:
 
 ## Alternative: Create the NADs for only selected namespaces with distinct VLANs per network - for outside access configuration
 

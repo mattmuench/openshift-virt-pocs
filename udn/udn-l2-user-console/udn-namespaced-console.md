@@ -7,10 +7,10 @@ An overview is available in [Overview to local networks](udn-overview.md).
 Namespace specific NADs can be used to provide an isolated local network that is not using the pod subnet. This is useful if an administrator needs to isolate any communication between pods or VMs from any other network and the potential access from unauthorized resources.
 
 **Note:**
-"Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
+"Currently, creation of a UserDefinedNetwork CR with a Layer3 topology or a Secondary role are not supported when using the OpenShift Container Platform web console." [UDNs](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/multiple_networks/index#nw-udn-cr-ui_about-user-defined-networks)
 
 **Note:**
-"You must consider the following limitations before implementing a primary UDN [link](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
+"You must consider the following limitations before implementing a primary UDN [primary UDN limitations](https://docs.redhat.com/es/documentation/openshift_container_platform/4.19/html-single/virtualization/index#virt-connecting-vm-to-primary-udn):
 
 - You cannot use the virtctl ssh command to configure SSH access to a VM.
 - You cannot use the oc port-forward command to forward ports to a VM.
@@ -43,7 +43,7 @@ Prepare for creating a UDN with a specific CIDR. The IP addresses for the VMs in
 
 In order to avoid potential clashes with cluster networks in use, one would check the cluster IP address ranges in use before selecting the CIDR to use. One can check it from the console. If one has no access to the cluster config, check with the administrator of the cluster which network settings are safe to be used in UDNs.
 
-Select _Administration_ and _CustomResourceDefinitions_ and then type in the search field _networks.config_ . Only one item is listed marked with _CRD_ named _network_. Then switch the submenu in the window to _Instances_, select the link for the entry _NO_ _cluster_ and then switch the submenu of the newly displayed page to _YAML_ view.\
+Select _Administration_ and _CustomResourceDefinitions_ and then type in the search field _networks.config_ . Only one item is listed marked with _CRD_ named _network_. Then switch the submenu in the window to _Instances_, select the link for the entry _NO_ _cluster_ and then switch the submenu of the newly displayed page to _YAML_ view.  
 ![UI view of OpenShift console to create UDNs](images/udn-user-check-cluster-networks.png)
 ![UI view of OpenShift console to create UDNs](images/udn-user-check-cluster-networks-config.png)
 ![UI view of OpenShift console to create UDNs](images/udn-user-check-cluster-networks-config-instance.png)
@@ -59,7 +59,7 @@ One must create a network resource to consume it with VMs (and pods).
 
 **Note:** Up to OpenShift version 4.19, the local network resource must be created upfront. Later versions of OpenShift might allow an on-the-fly creation of the network resource at the time of a VM creation.
 
-From the main menu under _Networking_, select _UserDefinedNetworks_. Then select Create and from the dropdown menu the _UserDefinedNetwork_.\
+From the main menu under _Networking_, select _UserDefinedNetworks_. Then select Create and from the dropdown menu the _UserDefinedNetwork_.  
 ![UI view of OpenShift console to create UDNs](images/udn-main-menu.png)
 
 ![UI view of OpenShift console to create UDNs](images/udn-new-user-udn.png)
@@ -74,7 +74,7 @@ Select the CIDR to use inside the layer 2 network. The IP addresses for the VMs 
 
 Finally, select _Create_ to the the UDN.
 
-![UI view of OpenShift console to create UDNs](images/udn-user-udn-specification.png)\
+![UI view of OpenShift console to create UDNs](images/udn-user-udn-specification.png)  
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-created.png)
 
 In the listing, one may find the IP address range assigned as well as the namespace it was configured. Note that this UDN is only visible in the namespace selected
@@ -93,7 +93,7 @@ Create two VMs using the same namespace but the new local network resource, the 
 
 The VM will be automatically started if not disabled.
 
-Already from the overview of the started VM, the assigned IP address is listed.\
+Already from the overview of the started VM, the assigned IP address is listed.  
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm2-running-network-address.png)
 
 Create another VM inside the same namespace like the one before.
@@ -104,19 +104,19 @@ Record the network address assigned to the VM on the default network on the VM o
 
 Login to the console of one of the newly created VMs and check check with ping the network connection is working.
 
-The peer VM inside the same namespace should be responding to the ping:\
+The peer VM inside the same namespace should be responding to the ping:  
 ![UI view of OpenShift console to create UDNs](images/udn-user-udn-vm1-to-vm2-ping.png)
 
 ## Check IP addresses and communication after one of the VMs is live migrated to another node
 
-Check the actual nodes the VMs are running on:\
+Check the actual nodes the VMs are running on:  
 ![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-pre.png)
 
-Start the live migration (Migration => Compute) of one of the VMs:\
+Start the live migration (Migration => Compute) of one of the VMs:  
 ![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-start.png)
 
-Wait for the VM to complete migration and verify new node:\
+Wait for the VM to complete migration and verify new node:  
 ![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-post-done.png)
 
-Check connectivity after live migration - ping peer VM and verify connection:\
+Check connectivity after live migration - ping peer VM and verify connection:  
 ![UI view of OpenShift console to create UDNs](images/udn-user-vm-migrate-post-ping.png)
