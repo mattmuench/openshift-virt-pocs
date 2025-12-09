@@ -1,0 +1,55 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: live-migration # Keep the same name
+spec:
+  
+  desiredState:
+    interfaces:
+      # 1. untagged base interface for the host communication lines - attached to the ovs-bridge - direct host access
+      - name: dir-host
+        description: base ovs internal port for host access
+        type: ovs-interface
+        state: up
+        
+        # Requirement 1: Use 'controller' to link to the OVS bridge
+        controller: br-lm 
+        
+      # 2. vlan host interface, tagged, with DHCP based IP 
+      - name: dir-host.3876
+        description: host NFS access interface with DHCP IP
+        type: vlan
+        state: up
+        
+        # Define the parent interface and vlan id
+        vlan:
+          base-iface: dir-host
+          id: 3876
+          
+        # Configure the static IP address for the host
+        ipv4:
+          enabled: true
+          dhcp: true
+            
+      # 3. ovs bridge defintion with ports
+      - name: br-lm
+        state: up
+        type: ovs-bridge
+        bridge:
+          allow-extra-patch-ports: true
+          options:
+            stp: false
+          port:
+            # NAD based configuration ports 
+            - name: enp4s0u2u1
+            - name: br-lm 
+            
+            # required: Explicitly list the new additional internal port here!
+            - name: dir-host
+            
+    # 4. ovn bridge mappings for localnet
+    ovn:
+      bridge-mappings:
+      - bridge: br-lm
+        localnet: ovs-lm
+        state: present
