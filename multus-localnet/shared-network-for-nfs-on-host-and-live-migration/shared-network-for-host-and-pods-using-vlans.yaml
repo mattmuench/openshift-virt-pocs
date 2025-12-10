@@ -1,7 +1,7 @@
 apiVersion: nmstate.io/v1
 kind: NodeNetworkConfigurationPolicy
 metadata:
-  name: live-migration # Keep the same name
+  name: live-migration-shared
 spec:
   
   desiredState:
@@ -31,7 +31,7 @@ spec:
           enabled: true
           dhcp: true
             
-      # 3. ovs bridge defintion with ports
+      # 3. ovs bridge definition with ports
       - name: br-lm
         state: up
         type: ovs-bridge
