@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate Final README.md from Current File (Perl)",
+            "type": "shell",
+            // Command: 
+            // 1. 'cat' reads the content of the currently active file (${file}).
+            // 2. The pipe (|) feeds that content to 'perl'.
+            // 3. 'perl' replaces '!!!include(...)!!!' with the content of the included file.
+            // 4. The output is redirected (>) to the final README.md file.
+            // NOTE: We wrap the command in parentheses to ensure the output redirection applies to the whole pipeline.
+            //"command": "(cat \"${file}\" | perl -pe 's/!!!include\\((.*?)\\)!!!/`cat \"${fileDirname}\"/$1`/ge') > \"${fileDirname}/README.md\"",
+            "command": "(cat \"${file}\" | perl -pe 's|!!!include\\((.*?)\\)!!!|`cat \"${fileDirname}/$1\"`|ge') > \"${fileDirname}/README.md\"",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
