@@ -1,0 +1,80 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: nncp-extranet-master0
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: master0.acm41.dslab.local
+  desiredState:
+    interfaces:
+    - bridge:
+        options:
+          stp:
+            enabled: false
+        port:
+        - name: enp2s0
+      name: br-vm
+      state: up
+      type: ovs-bridge
+    ovn:
+      bridge-mappings:
+      - bridge: br-vm
+        localnet: ln-2
+        state: present
+      - bridge: br-vm
+        localnet: ln-1
+        state: present
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: nncp-extranet-master1
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: master1.acm41.dslab.local
+  desiredState:
+    interfaces:
+    - bridge:
+        options:
+          stp:
+            enabled: false
+        port:
+        - name: enp4s0
+      name: br-vm
+      state: up
+      type: ovs-bridge
+    ovn:
+      bridge-mappings:
+      - bridge: br-vm
+        localnet: ln-2
+        state: present
+      - bridge: br-vm
+        localnet: ln-1
+        state: present
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: nncp-extranet-master2
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: master2.acm41.dslab.local
+  desiredState:
+    interfaces:
+    - bridge:
+        options:
+          stp:
+            enabled: false
+        port:
+        - name: enp3s0
+      name: br-vm
+      state: up
+      type: ovs-bridge
+    ovn:
+      bridge-mappings:
+      - bridge: br-vm
+        localnet: ln-2
+        state: present
+      - bridge: br-vm
+        localnet: ln-1
+        state: present
