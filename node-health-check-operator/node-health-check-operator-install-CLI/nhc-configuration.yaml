@@ -13,10 +13,10 @@ spec:
   unhealthyConditions:
     - type: Ready
       status: "False"
-      duration: 300s # 5 minutes
+      duration: 30s # default of 5 minutes is too long
     - type: Ready
       status: Unknown
-      duration: 300s # 5 minutes
+      duration: 30s # default of 5 minutes is too long
 
   # 3. Remediation Action: Specifies the template to use (e.g., for reboot or deletion)
   # IMPORTANT: The 'remediationTemplate' must point to a valid template created 
@@ -29,4 +29,5 @@ spec:
 
   # 4. Cluster Health Guard: Prevents remediation if too many nodes are unhealthy
   # Remediation is only started if at least 51% of the selected nodes are healthy.
-  minHealthy: "51%"
+  minHealthy: "51%" # At least this much of the cluster must be healthy or do not continue with remediation
+  #maxUnhealthy: 1  # Max this number of nodes must be unavailable to continue, otherwise don't continue and wait for an operator to act on it.
